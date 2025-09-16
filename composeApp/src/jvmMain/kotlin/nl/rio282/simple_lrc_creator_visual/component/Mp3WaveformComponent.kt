@@ -19,16 +19,17 @@ fun Mp3WaveformComponent(
     currentPositionMs: Long,
     onPositionChange: (Long) -> Unit
 ) {
-    // precompute waveform samples (reduce to ~500 points for display)
+    val maxSteps = 500
+    var currentStep by remember { mutableStateOf<Int>(((currentPositionMs.toDouble() / mp3.durationMs) * maxSteps).toInt()) }
+
+    // precompute waveform samples (reduce to ~maxSteps points for display)
     val samples = remember(mp3) {
-        val step = (mp3.pcmSamples.size / 500.0).coerceAtLeast(1.0)
-        List(500) { i ->
+        val step = (mp3.pcmSamples.size / maxSteps.toDouble()).coerceAtLeast(1.0)
+        List(maxSteps) { i ->
             val index = (i * step).roundToInt().coerceAtMost(mp3.pcmSamples.size - 1)
             mp3.pcmSamples[index] / Short.MAX_VALUE.toFloat()
         }
     }
-
-    // TODO: figure out where currentPositionMs is in the samples, and then render the ones past it grey
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Canvas(
@@ -42,7 +43,7 @@ fun Mp3WaveformComponent(
                 val x = i * widthPerSample
                 val y = sample * centerY
                 drawLine(
-                    color = Color.Blue,
+                    color = if (i < currentStep) Color.Blue else Color.Gray,
                     start = Offset(x, centerY - y),
                     end = Offset(x, centerY + y),
                     strokeWidth = 1f
@@ -54,14 +55,16 @@ fun Mp3WaveformComponent(
 
         Slider(
             value = currentPositionMs.toFloat(),
-            onValueChange = { onPositionChange(it.toLong()) },
+            onValueChange = {
+                currentStep = ((currentPositionMs.toDouble() / mp3.durationMs) * maxSteps).toInt()
+                onPositionChange(it.toLong())
+            },
             valueRange = 0f..mp3.durationMs.toFloat(),
             modifier = Modifier.fillMaxWidth()
         )
 
         Text(
-            "Time: ${Mp3Controller.formatTimeMs(currentPositionMs)} / " +
-                    Mp3Controller.formatTimeMs(mp3.durationMs)
+            "Time: ${Mp3Controller.formatTimeMs(currentPositionMs)} / ${Mp3Controller.formatTimeMs(mp3.durationMs)}"
         )
     }
 }
