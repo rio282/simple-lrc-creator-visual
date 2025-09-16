@@ -8,11 +8,16 @@ import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import java.io.File
 import java.io.FileInputStream
 import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 
 object Mp3Controller {
 
     fun pickMp3File(): Mp3Model? {
-        val chooser = JFileChooser().apply { dialogTitle = "Select an MP3 File" }
+        val chooser = JFileChooser().apply {
+            dialogTitle = "Select an MP3 File"
+            fileFilter = FileNameExtensionFilter("MP3 files", "mp3")
+            isAcceptAllFileFilterUsed = false
+        }
         if (chooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) return null
         val file = chooser.selectedFile
 

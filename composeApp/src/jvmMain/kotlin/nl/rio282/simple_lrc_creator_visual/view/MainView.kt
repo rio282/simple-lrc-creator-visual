@@ -10,6 +10,7 @@ import nl.rio282.simple_lrc_creator_visual.component.Mp3InfoComponent
 import nl.rio282.simple_lrc_creator_visual.component.Mp3WaveformComponent
 import nl.rio282.simple_lrc_creator_visual.component.TopBar
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
+import nl.rio282.simple_lrc_creator_visual.model.LyricLine
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
@@ -20,7 +21,7 @@ fun MainView() {
     var lrcLoaded by remember { mutableStateOf(false) }
     var displayFileInfo by remember { mutableStateOf(false) }
     var currentPositionMs by remember { mutableStateOf(0L) }
-    var lyrics by remember { mutableStateOf("") }
+    val lyrics = remember { mutableStateListOf<LyricLine>() } // start ms of lyric, lyric text
 
     Scaffold(
         topBar = {
@@ -89,8 +90,8 @@ fun MainView() {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         OutlinedTextField(
-                            value = lyrics,
-                            onValueChange = { lyrics = it },
+                            value = "", // TODO
+                            onValueChange = { /* TODO */ },
                             label = { Text("Lyrics") },
                             modifier = Modifier
                                 .fillMaxWidth(0.7f)
