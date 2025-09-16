@@ -1,6 +1,11 @@
 package nl.rio282.simple_lrc_creator_visual.view
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,8 +25,10 @@ fun MainView() {
     var mp3 by remember { mutableStateOf<Mp3Model?>(null) }
     var lrcLoaded by remember { mutableStateOf(false) }
     var displayFileInfo by remember { mutableStateOf(false) }
+
     var currentPositionMs by remember { mutableStateOf(0L) }
     val lyrics = remember { mutableStateListOf<LyricLine>() } // start ms of lyric, lyric text
+    var currentLyric by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -89,19 +96,67 @@ fun MainView() {
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        OutlinedTextField(
-                            value = "", // TODO
-                            onValueChange = { /* TODO */ },
-                            label = { Text("Lyrics") },
+                        Row(
                             modifier = Modifier
-                                .fillMaxWidth(0.7f)
+                                .fillMaxWidth()
                                 .height(150.dp)
-                        )
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .fillMaxHeight()
+                            ) {
+                                OutlinedTextField(
+                                    value = currentLyric,
+                                    onValueChange = { currentLyric = it },
+                                    label = { Text("Lyrics") },
+                                    modifier = Modifier.fillMaxSize(), // fills the Box
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
+                                    .padding(4.dp)
+                            ) {
+                                items(lyrics) { line ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                currentPositionMs = line.timestampMs
+                                                currentLyric = line.text
+                                            }
+                                            .padding(vertical = 2.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = Mp3Controller.formatTimeMs(line.timestampMs),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            modifier = Modifier.width(60.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = line.text.take(20),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
+                            }
+                        }
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Button(
-                            onClick = { /* TODO */ },
+                            onClick = {
+                                lyrics.add(LyricLine(currentPositionMs, currentLyric))
+                                currentLyric = ""
+                            },
                         ) {
                             Text("+ Add Lyric")
                         }
