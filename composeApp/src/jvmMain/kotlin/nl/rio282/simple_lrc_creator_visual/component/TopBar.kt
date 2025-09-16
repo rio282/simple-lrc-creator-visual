@@ -1,4 +1,4 @@
-package nl.rio282.simple_lrc_creator_visual.view
+package nl.rio282.simple_lrc_creator_visual.component
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

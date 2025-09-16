@@ -1,4 +1,4 @@
-package nl.rio282.simple_lrc_creator_visual.view
+package nl.rio282.simple_lrc_creator_visual.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -7,13 +7,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import kotlin.math.roundToInt
 
 @Composable
-fun Mp3WaveformView(
+fun Mp3WaveformComponent(
     mp3: Mp3Model,
     currentPositionMs: Long,
     onPositionChange: (Long) -> Unit
@@ -27,6 +28,8 @@ fun Mp3WaveformView(
         }
     }
 
+    // TODO: figure out where currentPositionMs is in the samples, and then render the ones past it grey
+
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Canvas(
             modifier = Modifier
@@ -39,7 +42,7 @@ fun Mp3WaveformView(
                 val x = i * widthPerSample
                 val y = sample * centerY
                 drawLine(
-                    color = androidx.compose.ui.graphics.Color.Blue,
+                    color = Color.Blue,
                     start = Offset(x, centerY - y),
                     end = Offset(x, centerY + y),
                     strokeWidth = 1f

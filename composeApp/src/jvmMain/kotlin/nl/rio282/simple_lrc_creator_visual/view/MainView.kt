@@ -6,6 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import nl.rio282.simple_lrc_creator_visual.component.Mp3InfoComponent
+import nl.rio282.simple_lrc_creator_visual.component.Mp3WaveformComponent
+import nl.rio282.simple_lrc_creator_visual.component.TopBar
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import javax.swing.JOptionPane
@@ -15,6 +18,7 @@ import kotlin.system.exitProcess
 fun MainView() {
     var mp3 by remember { mutableStateOf<Mp3Model?>(null) }
     var lrcLoaded by remember { mutableStateOf(false) }
+    var displayFileInfo by remember { mutableStateOf(false) }
     var currentPositionMs by remember { mutableStateOf(0L) }
     var lyrics by remember { mutableStateOf("") }
 
@@ -55,7 +59,23 @@ fun MainView() {
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Mp3WaveformView(
+                        Button(
+                            onClick = { displayFileInfo = !displayFileInfo },
+                            modifier = Modifier.height(32.dp),
+                            contentPadding = PaddingValues(
+                                start = 8.dp,
+                                top = 4.dp,
+                                end = 8.dp,
+                                bottom = 4.dp
+                            )
+                        ) {
+                            Text("Show File Information", maxLines = 1)
+                        }
+                        if (displayFileInfo) {
+                            Mp3InfoComponent(mp3!!)
+                        }
+
+                        Mp3WaveformComponent(
                             mp3 = mp3!!,
                             currentPositionMs = currentPositionMs,
                             onPositionChange = { currentPositionMs = it }
@@ -76,6 +96,14 @@ fun MainView() {
                                 .fillMaxWidth(0.7f)
                                 .height(150.dp)
                         )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = { /* TODO */ },
+                        ) {
+                            Text("+ Add Lyric")
+                        }
 
                         if (!lrcLoaded) {
                             Spacer(modifier = Modifier.height(8.dp))
