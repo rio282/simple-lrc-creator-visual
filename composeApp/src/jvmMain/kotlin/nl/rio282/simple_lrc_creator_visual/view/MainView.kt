@@ -110,7 +110,7 @@ fun MainView() {
                                     value = currentLyric,
                                     onValueChange = { currentLyric = it },
                                     label = { Text("Lyrics") },
-                                    modifier = Modifier.fillMaxSize(), // fills the Box
+                                    modifier = Modifier.fillMaxSize(),
                                 )
                             }
 
@@ -139,7 +139,7 @@ fun MainView() {
                                             style = MaterialTheme.typography.bodySmall,
                                             modifier = Modifier.width(60.dp)
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Spacer(modifier = Modifier.width(2.dp))
                                         Text(
                                             text = line.text.take(20),
                                             style = MaterialTheme.typography.bodyMedium,
