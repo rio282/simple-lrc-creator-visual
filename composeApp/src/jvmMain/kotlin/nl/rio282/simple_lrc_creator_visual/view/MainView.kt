@@ -18,7 +18,6 @@ import nl.rio282.simple_lrc_creator_visual.controller.LrcController
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.LyricLine
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
-import java.io.File
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
@@ -29,6 +28,8 @@ fun MainView() {
     var displayFileInfo by remember { mutableStateOf(false) }
 
     var currentPositionMs by remember { mutableStateOf(0L) }
+    var currentStep by remember { mutableStateOf(0L) }
+    val maxSteps = 500
     val lyrics = remember { mutableStateListOf<LyricLine>() } // start ms of lyric, lyric text
     var currentLyric by remember { mutableStateOf("") }
 
@@ -54,7 +55,9 @@ fun MainView() {
                         JOptionPane.INFORMATION_MESSAGE
                     )
                 },
-                onExit = { exitProcess(0) }
+                onExit = { exitProcess(0) },
+                readyToImportLrc = mp3 != null,
+                readyToExportLrc = mp3 != null && lyrics.count() > 0,
             )
         }
     ) { padding ->
@@ -95,7 +98,12 @@ fun MainView() {
                         Mp3WaveformComponent(
                             mp3 = mp3!!,
                             currentPositionMs = currentPositionMs,
-                            onPositionChange = { currentPositionMs = it }
+                            currentStep = currentStep,
+                            maxSteps = maxSteps,
+                            onPositionChange = {
+                                currentPositionMs = it
+                                ((it.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
+                            }
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))

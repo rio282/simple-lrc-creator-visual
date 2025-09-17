@@ -17,11 +17,10 @@ import kotlin.math.roundToInt
 fun Mp3WaveformComponent(
     mp3: Mp3Model,
     currentPositionMs: Long,
+    currentStep: Long,
+    maxSteps: Int,
     onPositionChange: (Long) -> Unit
 ) {
-    val maxSteps = 500
-    var currentStep by remember { mutableStateOf<Int>(((currentPositionMs.toDouble() / mp3.durationMs) * maxSteps).toInt()) }
-
     // precompute waveform samples (reduce to ~maxSteps points for display)
     val samples = remember(mp3) {
         val step = (mp3.pcmSamples.size / maxSteps.toDouble()).coerceAtLeast(1.0)
@@ -55,10 +54,7 @@ fun Mp3WaveformComponent(
 
         Slider(
             value = currentPositionMs.toFloat(),
-            onValueChange = {
-                currentStep = ((currentPositionMs.toDouble() / mp3.durationMs) * maxSteps).toInt()
-                onPositionChange(it.toLong())
-            },
+            onValueChange = { onPositionChange(it.toLong()) },
             valueRange = 0f..mp3.durationMs.toFloat(),
             modifier = Modifier.fillMaxWidth()
         )

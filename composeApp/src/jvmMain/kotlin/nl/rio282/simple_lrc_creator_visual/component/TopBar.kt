@@ -11,14 +11,26 @@ fun TopBar(
     onImportMp3: () -> Unit,
     onImportLrc: () -> Unit,
     onExportLrc: () -> Unit,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    readyToImportLrc: Boolean,
+    readyToExportLrc: Boolean,
 ) {
     TopAppBar(
         title = { Text("Simple LRC Creator") },
         actions = {
             TextButton(onClick = onImportMp3) { Text("Import MP3") }
-            TextButton(onClick = onImportLrc) { Text("Import LRC") }
-            TextButton(onClick = onExportLrc) { Text("Export LRC") }
+            TextButton(
+                onClick = onImportLrc,
+                enabled = readyToImportLrc
+            ) {
+                Text("Import LRC")
+            }
+            TextButton(
+                onClick = onExportLrc,
+                enabled = readyToExportLrc
+            ) {
+                Text("Export LRC")
+            }
             TextButton(onClick = onExit) { Text("Exit") }
         },
         modifier = Modifier.fillMaxWidth()
