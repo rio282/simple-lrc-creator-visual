@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.rio282.simple_lrc_creator_visual.component.Mp3InfoComponent
 import nl.rio282.simple_lrc_creator_visual.component.Mp3WaveformComponent
@@ -28,7 +29,7 @@ fun MainView() {
     var displayFileInfo by remember { mutableStateOf(false) }
 
     var currentPositionMs by remember { mutableStateOf(0L) }
-    var currentStep by remember { mutableStateOf(0L) }
+    var currentStep by remember { mutableStateOf(0) }
     val maxSteps = 500
     val lyrics = remember { mutableStateListOf<LyricLine>() } // start ms of lyric, lyric text
     var currentLyric by remember { mutableStateOf("") }
@@ -91,10 +92,12 @@ fun MainView() {
                         ) {
                             Text("Show File Information", maxLines = 1)
                         }
+
                         if (displayFileInfo) {
                             Mp3InfoComponent(mp3!!)
                         }
 
+                        // TODO: fix samples/currentStep not updating in child (Mp3WaveformComponent)
                         Mp3WaveformComponent(
                             mp3 = mp3!!,
                             currentPositionMs = currentPositionMs,
@@ -102,14 +105,17 @@ fun MainView() {
                             maxSteps = maxSteps,
                             onPositionChange = {
                                 currentPositionMs = it
-                                ((it.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
+                                currentStep = ((it.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
                             }
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "Timestamp: ${Mp3Controller.formatTimeMs(currentPositionMs)} / " +
-                                    Mp3Controller.formatTimeMs(mp3!!.durationMs)
+                            "Timestamp: ${Mp3Controller.formatTimeMs(currentPositionMs)} / ${
+                                Mp3Controller.formatTimeMs(
+                                    mp3!!.durationMs
+                                )
+                            }"
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -154,6 +160,7 @@ fun MainView() {
                                         Text(
                                             text = Mp3Controller.formatTimeMs(line.timestampMs),
                                             style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Bold,
                                             modifier = Modifier.width(60.dp)
                                         )
                                         Spacer(modifier = Modifier.width(2.dp))

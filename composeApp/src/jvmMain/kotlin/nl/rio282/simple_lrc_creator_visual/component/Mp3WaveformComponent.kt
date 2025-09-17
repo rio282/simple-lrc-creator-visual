@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 fun Mp3WaveformComponent(
     mp3: Mp3Model,
     currentPositionMs: Long,
-    currentStep: Long,
+    currentStep: Int,
     maxSteps: Int,
     onPositionChange: (Long) -> Unit
 ) {
