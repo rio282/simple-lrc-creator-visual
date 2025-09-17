@@ -14,9 +14,11 @@ import androidx.compose.ui.unit.dp
 import nl.rio282.simple_lrc_creator_visual.component.Mp3InfoComponent
 import nl.rio282.simple_lrc_creator_visual.component.Mp3WaveformComponent
 import nl.rio282.simple_lrc_creator_visual.component.TopBar
+import nl.rio282.simple_lrc_creator_visual.controller.LrcController
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.LyricLine
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
+import java.io.File
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
@@ -36,7 +38,14 @@ fun MainView() {
                 onImportMp3 = {
                     mp3 = Mp3Controller.pickMp3File()
                 },
-                onImportLrc = { lrcLoaded = true },
+                onImportLrc = {
+                    val lrcFile = LrcController.pickLrcFile() ?: return@TopBar
+
+                    lyrics.clear()
+                    lyrics.addAll(LrcController.importLrc(lrcFile))
+
+                    lrcLoaded = true
+                },
                 onExportLrc = {
                     JOptionPane.showMessageDialog(
                         null,
