@@ -50,7 +50,7 @@ fun MainView() {
                 onExportLrc = {
                     val exportFile = LrcController.pickSaveLocationJFC() ?: return@TopBar
                     if (!exportFile.exists()) exportFile.createNewFile()
-                    exportFile.writeText(LrcController.exportToLrc(lyrics))
+                    exportFile.writeText(LrcController.exportToLrc(lyrics, mp3!!.durationMs))
                 },
                 onExit = { exitProcess(0) },
                 readyToImportLrc = mp3 != null,

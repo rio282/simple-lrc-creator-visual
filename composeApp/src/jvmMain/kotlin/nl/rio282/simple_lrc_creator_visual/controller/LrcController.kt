@@ -41,11 +41,11 @@ object LrcController {
         return lines.toList()
     }
 
-    fun exportToLrc(lyrics: List<LyricLine>): String {
+    fun exportToLrc(lyrics: List<LyricLine>, duration: Long): String {
         return lyrics.sortedBy { it.timestampMs }
             .joinToString("\n") { lyric ->
                 "[${formatTimestamp(lyric.timestampMs)}]${lyric.text}".replace("\n", "")
-            }
+            } + "[${formatTimestamp(duration)}]"
     }
 
     fun formatTimestamp(ms: Long): String {
