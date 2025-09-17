@@ -38,7 +38,7 @@ fun MainView() {
         topBar = {
             TopBar(
                 onImportMp3 = {
-                    mp3 = Mp3Controller.pickMp3File()
+                    mp3 = Mp3Controller.pickMp3File() ?: mp3
                 },
                 onImportLrc = {
                     val lrcFile = LrcController.pickLrcFile() ?: return@TopBar
@@ -97,7 +97,6 @@ fun MainView() {
                             Mp3InfoComponent(mp3!!)
                         }
 
-                        // TODO: fix samples/currentStep not updating in child (Mp3WaveformComponent)
                         Mp3WaveformComponent(
                             mp3 = mp3!!,
                             currentPositionMs = currentPositionMs,
@@ -152,6 +151,8 @@ fun MainView() {
                                             .fillMaxWidth()
                                             .clickable {
                                                 currentPositionMs = line.timestampMs
+                                                currentStep =
+                                                    ((line.timestampMs.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
                                                 currentLyric = line.text
                                             }
                                             .padding(vertical = 2.dp),
@@ -174,11 +175,13 @@ fun MainView() {
                             }
                         }
 
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Button(
                             onClick = {
                                 lyrics.add(LyricLine(currentPositionMs, currentLyric))
+                                lyrics.sortBy { it.timestampMs }
                                 currentLyric = ""
                             },
                         ) {

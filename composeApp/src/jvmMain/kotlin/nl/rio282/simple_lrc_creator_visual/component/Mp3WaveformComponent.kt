@@ -1,6 +1,7 @@
 package nl.rio282.simple_lrc_creator_visual.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -8,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
@@ -35,6 +37,13 @@ fun Mp3WaveformComponent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(150.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        val newStep = (offset.x / size.width * maxSteps).toInt()
+                        val newPosition = (newStep.toDouble() / maxSteps * mp3.durationMs).toLong()
+                        onPositionChange(newPosition)
+                    }
+                }
         ) {
             val widthPerSample = size.width / samples.size
             val centerY = size.height / 2
