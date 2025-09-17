@@ -17,6 +17,13 @@ object LrcController {
         return chooser.selectedFile
     }
 
+    fun pickSaveLocationJFC(defaultFileName: String = "lyrics.lrc"): File? {
+        val chooser = JFileChooser()
+        chooser.selectedFile = File(defaultFileName)
+        val result = chooser.showSaveDialog(null)
+        return if (result == JFileChooser.APPROVE_OPTION) chooser.selectedFile else null
+    }
+
     fun importLrc(file: File): List<LyricLine> {
         val lines = mutableListOf<LyricLine>()
 
@@ -34,10 +41,10 @@ object LrcController {
         return lines.toList()
     }
 
-    fun exportToLrc(lines: List<LyricLine>): String {
-        return lines.sortedBy { it.timestampMs }
-            .joinToString("\n") { line ->
-                formatTimestamp(line.timestampMs)
+    fun exportToLrc(lyrics: List<LyricLine>): String {
+        return lyrics.sortedBy { it.timestampMs }
+            .joinToString("\n") { lyric ->
+                "[${formatTimestamp(lyric.timestampMs)}]${lyric.text}".replace("\n", "")
             }
     }
 

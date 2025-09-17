@@ -49,12 +49,9 @@ fun MainView() {
                     lrcLoaded = true
                 },
                 onExportLrc = {
-                    JOptionPane.showMessageDialog(
-                        null,
-                        "WORK IN PROGRESS",
-                        "Export LRC",
-                        JOptionPane.INFORMATION_MESSAGE
-                    )
+                    val exportFile = LrcController.pickSaveLocationJFC() ?: return@TopBar
+                    if (!exportFile.exists()) exportFile.createNewFile()
+                    exportFile.writeText(LrcController.exportToLrc(lyrics))
                 },
                 onExit = { exitProcess(0) },
                 readyToImportLrc = mp3 != null,
