@@ -19,7 +19,6 @@ import nl.rio282.simple_lrc_creator_visual.controller.LrcController
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
 import nl.rio282.simple_lrc_creator_visual.model.LyricLine
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
-import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 @Composable
