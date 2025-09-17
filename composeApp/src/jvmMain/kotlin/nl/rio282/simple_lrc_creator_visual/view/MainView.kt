@@ -52,6 +52,12 @@ fun MainView() {
                     if (!exportFile.exists()) exportFile.createNewFile()
                     exportFile.writeText(LrcController.exportToLrc(lyrics, mp3!!.durationMs))
                 },
+                onEmbedLyircsIntoMp3 = {
+                    LrcController.embedLyrics(
+                        mp3Model = mp3!!,
+                        lyrics = LrcController.exportToLrc(lyrics, mp3!!.durationMs)
+                    )
+                },
                 onExit = { exitProcess(0) },
                 readyToImportLrc = mp3 != null,
                 readyToExportLrc = mp3 != null && lyrics.count() > 0,

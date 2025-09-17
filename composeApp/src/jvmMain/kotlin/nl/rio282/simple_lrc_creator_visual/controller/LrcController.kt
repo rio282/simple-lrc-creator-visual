@@ -1,6 +1,10 @@
 package nl.rio282.simple_lrc_creator_visual.controller
 
+import com.mpatric.mp3agic.ID3v2
+import com.mpatric.mp3agic.ID3v24Tag
+import com.mpatric.mp3agic.Mp3File
 import nl.rio282.simple_lrc_creator_visual.model.LyricLine
+import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -46,6 +50,15 @@ object LrcController {
             .joinToString("\n") { lyric ->
                 "[${formatTimestamp(lyric.timestampMs)}]${lyric.text}".replace("\n", "")
             } + "[${formatTimestamp(duration)}]"
+    }
+
+    fun embedLyrics(mp3Model: Mp3Model, lyrics: String, outputPath: String? = null) {
+        val mp3Path = mp3Model.file.absolutePath
+        val mp3 = Mp3File(mp3Path)
+        val id3v2Tag = mp3.id3v2Tag ?: ID3v24Tag().also { mp3.id3v2Tag = it }
+
+        id3v2Tag.lyrics = lyrics
+        mp3.save(mp3Path)
     }
 
     fun formatTimestamp(ms: Long): String {

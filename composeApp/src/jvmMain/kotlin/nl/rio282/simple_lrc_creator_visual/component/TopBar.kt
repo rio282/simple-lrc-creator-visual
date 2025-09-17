@@ -11,6 +11,7 @@ fun TopBar(
     onImportMp3: () -> Unit,
     onImportLrc: () -> Unit,
     onExportLrc: () -> Unit,
+    onEmbedLyircsIntoMp3: () -> Unit,
     onExit: () -> Unit,
     readyToImportLrc: Boolean,
     readyToExportLrc: Boolean,
@@ -30,6 +31,12 @@ fun TopBar(
                 enabled = readyToExportLrc
             ) {
                 Text("Export LRC")
+            }
+            TextButton(
+                onClick = onEmbedLyircsIntoMp3,
+                enabled = readyToExportLrc
+            ) {
+                Text("Embed Lyrics Into MP3")
             }
             TextButton(onClick = onExit) { Text("Exit") }
         },
