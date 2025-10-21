@@ -17,6 +17,7 @@ import nl.rio282.simple_lrc_creator_visual.component.Mp3WaveformComponent
 import nl.rio282.simple_lrc_creator_visual.component.TopBar
 import nl.rio282.simple_lrc_creator_visual.controller.LrcController
 import nl.rio282.simple_lrc_creator_visual.controller.Mp3Controller
+import nl.rio282.simple_lrc_creator_visual.model.LrcModel
 import nl.rio282.simple_lrc_creator_visual.model.LyricLine
 import nl.rio282.simple_lrc_creator_visual.model.Mp3Model
 import kotlin.system.exitProcess
@@ -24,14 +25,11 @@ import kotlin.system.exitProcess
 @Composable
 fun MainView() {
     var mp3 by remember { mutableStateOf<Mp3Model?>(null) }
-    var lrcLoaded by remember { mutableStateOf(false) }
+    var lrc by remember { mutableStateOf(LrcModel()) }
     var displayFileInfo by remember { mutableStateOf(false) }
 
-    var currentPositionMs by remember { mutableStateOf(0L) }
-    var currentStep by remember { mutableStateOf(0) }
-    val maxSteps = 500
-    val lyrics = remember { mutableStateListOf<LyricLine>() } // start ms of lyric, lyric text
-    var currentLyric by remember { mutableStateOf("") }
+    val lyrics = remember { mutableStateListOf<LyricLine>() }
+    var currentMs by remember { mutableStateOf(0L) }
 
     Scaffold(
         topBar = {
@@ -41,11 +39,12 @@ fun MainView() {
                 },
                 onImportLrc = {
                     val lrcFile = LrcController.pickLrcFile() ?: return@TopBar
+                    lrc.loaded = false
 
                     lyrics.clear()
                     lyrics.addAll(LrcController.importLrc(lrcFile))
 
-                    lrcLoaded = true
+                    lrc.loaded = true
                 },
                 onExportLrc = {
                     val exportFile = LrcController.pickSaveLocationJFC() ?: return@TopBar
@@ -101,96 +100,71 @@ fun MainView() {
 
                         Mp3WaveformComponent(
                             mp3 = mp3!!,
-                            currentPositionMs = currentPositionMs,
-                            currentStep = currentStep,
-                            maxSteps = maxSteps,
                             onPositionChange = {
-                                currentPositionMs = it
-                                currentStep = ((it.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
+                                currentMs = it
                             }
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            "Timestamp: ${Mp3Controller.formatTimeMs(currentPositionMs)} / ${
-                                Mp3Controller.formatTimeMs(
-                                    mp3!!.durationMs
-                                )
-                            }"
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                         Spacer(modifier = Modifier.height(16.dp))
+//                        Text(
+//                            "Timestamp: ${Mp3Controller.formatTimeMs(currentLyric?.timestampMs ?: -1)} / ${
+//                                Mp3Controller.formatTimeMs(
+//                                    mp3!!.durationMs
+//                                )
+//                            }"
+//                        )
+//                        Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(150.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(2f)
-                                    .fillMaxHeight()
-                            ) {
-                                OutlinedTextField(
-                                    value = currentLyric,
-                                    onValueChange = { currentLyric = it },
-                                    label = { Text("Lyrics") },
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight()
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
-                                    .padding(4.dp)
-                            ) {
-                                items(lyrics) { line ->
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                currentPositionMs = line.timestampMs
-                                                currentStep =
-                                                    ((line.timestampMs.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
-                                                currentLyric = line.text
-                                            }
-                                            .padding(vertical = 2.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = Mp3Controller.formatTimeMs(line.timestampMs),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.width(60.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(2.dp))
-                                        Text(
-                                            text = line.text.take(20),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            maxLines = 1
-                                        )
-                                    }
-                                }
-                            }
+//                            LazyColumn(
+//                                modifier = Modifier
+//                                    .weight(1f)
+//                                    .fillMaxHeight()
+//                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
+//                                    .padding(4.dp)
+//                            ) {
+//                                items(lyrics) { line ->
+//                                    Row(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .clickable {
+//                                                // ((line.timestampMs.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
+////                                                currentMs =
+//                                            }
+//                                            .padding(vertical = 2.dp),
+//                                        verticalAlignment = Alignment.CenterVertically
+//                                    ) {
+//                                        Text(
+//                                            text = Mp3Controller.formatTimeMs(line.timestampMs),
+//                                            style = MaterialTheme.typography.bodySmall,
+//                                            fontWeight = FontWeight.Bold,
+//                                            modifier = Modifier.width(60.dp)
+//                                        )
+//                                        Spacer(modifier = Modifier.width(2.dp))
+//                                        Text(
+//                                            text = line.text.take(20),
+//                                            style = MaterialTheme.typography.bodyMedium,
+//                                            maxLines = 1
+//                                        )
+//                                    }
+//                                }
+//                            }
                         }
-
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Button(
                             onClick = {
-                                lyrics.add(LyricLine(currentPositionMs, currentLyric))
-                                lyrics.sortBy { it.timestampMs }
-                                currentLyric = ""
+                                // TODO: open small window with textbox
                             },
                         ) {
                             Text("+ Add Lyric")
                         }
 
-                        if (!lrcLoaded) {
+                        if (!lrc.loaded) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 "No LRC file imported",
