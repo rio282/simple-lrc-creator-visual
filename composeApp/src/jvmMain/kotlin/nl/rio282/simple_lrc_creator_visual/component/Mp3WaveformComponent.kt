@@ -53,10 +53,9 @@ fun Mp3WaveformComponent(
                 .height(150.dp)
                 .pointerInput(Unit) {
                     detectTapGestures { offset ->
-                        // TODO:
-//                        val newStep = (offset.x / size.width * maxSteps).toInt()
-//                        val newPosition = (newStep.toDouble() / maxSteps * mp3.durationMs).toLong()
-//                        onPositionChangeWrapper(newPosition)
+                        val newStep = (offset.x / size.width * maxSteps).toInt()
+                        val newPosition = (newStep.toDouble() / maxSteps * mp3.durationMs).toLong()
+                        onPositionChangeWrapper(newPosition)
                     }
                 }
         ) {
