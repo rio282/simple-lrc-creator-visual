@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Trash2
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -104,54 +106,56 @@ fun MainView() {
                                 currentMs = it
                             }
                         )
-                         Spacer(modifier = Modifier.height(16.dp))
-//                        Text(
-//                            "Timestamp: ${Mp3Controller.formatTimeMs(currentLyric?.timestampMs ?: -1)} / ${
-//                                Mp3Controller.formatTimeMs(
-//                                    mp3!!.durationMs
-//                                )
-//                            }"
-//                        )
-//                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(150.dp)
                         ) {
-//                            LazyColumn(
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                                    .fillMaxHeight()
-//                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
-//                                    .padding(4.dp)
-//                            ) {
-//                                items(lyrics) { line ->
-//                                    Row(
-//                                        modifier = Modifier
-//                                            .fillMaxWidth()
-//                                            .clickable {
-//                                                // ((line.timestampMs.toDouble() / mp3!!.durationMs) * maxSteps).toInt()
-////                                                currentMs =
-//                                            }
-//                                            .padding(vertical = 2.dp),
-//                                        verticalAlignment = Alignment.CenterVertically
-//                                    ) {
-//                                        Text(
-//                                            text = Mp3Controller.formatTimeMs(line.timestampMs),
-//                                            style = MaterialTheme.typography.bodySmall,
-//                                            fontWeight = FontWeight.Bold,
-//                                            modifier = Modifier.width(60.dp)
-//                                        )
-//                                        Spacer(modifier = Modifier.width(2.dp))
-//                                        Text(
-//                                            text = line.text.take(20),
-//                                            style = MaterialTheme.typography.bodyMedium,
-//                                            maxLines = 1
-//                                        )
-//                                    }
-//                                }
-//                            }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
+                                    .padding(4.dp)
+                            ) {
+                                items(lyrics) { line ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                currentMs = line.timestampMs
+                                            }
+                                            .padding(vertical = 2.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = Mp3Controller.formatTimeMs(line.timestampMs),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.width(60.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(2.dp))
+                                        Text(
+                                            text = line.text.take(20),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1
+                                        )
+                                        Spacer(modifier = Modifier.fillMaxWidth())
+
+                                        IconButton(
+                                            onClick = {
+                                                // TODO: ask for confirmation first
+                                                lyrics.remove(line)
+                                            }
+                                        ) {
+                                            Icon(imageVector = FeatherIcons.Trash2, contentDescription = "Delete")
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
